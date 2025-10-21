@@ -1,48 +1,32 @@
-<?php 
+<?php
 
-function Conectar_SQL() {
+include_once 'conexion.php';
 
-    $server = "localhost";
-    $user = "root";
-    $pass = "";
-    $db = "workshop-3";
-
-    $conexion = new mysqli($server, $user, $pass, $db);
-
-    if($conexion->connect_errno) {
-        die("No me funco la conexion...");
-    };
-
-    return $conexion;
-
-}
+include_once 'objUsuario.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $nombre = urlencode($_POST['nombre']);
 
-    Agregar_Usuario();
+    $usuario = Crear_Usuario();
 
-    header('Location: login.php?nombre=' . $nombre);
+    header('Location: login.php?nombre=' . $usuario->nombre);
 }
 
-function Agregar_Usuario() {
-
-    $conexion = Conectar_SQL();
+function Crear_Usuario() {
 
     $nombre = $_POST['nombre'];
     $apellido = $_POST['apellido'];
     $provincia = $_POST['provincia'];
 
-    $consulta = "INSERT INTO usuarios (nombre, apellido, provincia) VALUES ('$nombre', '$apellido', '$provincia')";
+    $usuario = new ObjUsuario();
+    $usuario->nombre = $nombre;
+    $usuario->apellido = $apellido;
+    $usuario->provincia = $provincia;
 
-    if ($conexion->query($consulta)) {
-        echo "<script>alert('Se agrego el usuario corretamente');</script>";
-    } else {
-        echo "<script>alert('No se pudo agregarb el usuario');</script>";
-    }
+    $usuario->Agregar_Usuario();
 
-    $conexion->close();
+    return $usuario;
 
 }
 
